@@ -1,0 +1,103 @@
+import { FC } from 'react';
+import { Pressable, View } from 'react-native';
+import { Text } from 'react-native-gesture-handler';
+import { SvgProps } from 'react-native-svg';
+import Check from '@assets/icons/check.svg';
+import { colors } from '@utils/colors';
+
+type TodoItemProps = {
+  icon: FC<SvgProps>;
+  title: string;
+  time: string | undefined;
+  isChecked: boolean;
+  isLast?: boolean;
+  backgroundColor: string;
+  toggleCheck?: () => void;
+};
+
+const TodoItem = ({
+  icon: Icon,
+  time,
+  title,
+  isChecked,
+  isLast,
+  backgroundColor,
+  toggleCheck,
+}: TodoItemProps) => {
+  return (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 17,
+        borderBottomColor: isLast ? 'transparent' : colors.border,
+        borderBottomWidth: isLast ? 0 : 1,
+      }}
+    >
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          opacity: isChecked ? 0.5 : 1,
+          gap: 12,
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: backgroundColor,
+            width: 48,
+            height: 48,
+            borderRadius: 24,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Icon />
+        </View>
+        <View style={{ flexDirection: 'column', gap: 2 }}>
+          <Text
+            style={{
+              fontWeight: 600,
+              fontSize: 16,
+              textDecorationLine: isChecked ? 'line-through' : 'none',
+            }}
+          >
+            {title}
+          </Text>
+          {time && (
+            <Text
+              style={{
+                textDecorationLine: isChecked ? 'line-through' : 'none',
+                fontWeight: 500,
+                fontSize: 14,
+                color: colors.timeText,
+                opacity: 0.7,
+              }}
+            >
+              {time}
+            </Text>
+          )}
+        </View>
+      </View>
+      <Pressable
+        style={{
+          borderWidth: 1,
+          width: 24,
+          height: 24,
+          borderRadius: 3,
+          borderColor: colors.checkBoxBorder,
+          backgroundColor: isChecked ? colors.checkBoxBorder : 'transparent',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+        onPress={toggleCheck}
+      >
+        {isChecked && <Check />}
+      </Pressable>
+    </View>
+  );
+};
+
+export default TodoItem;
