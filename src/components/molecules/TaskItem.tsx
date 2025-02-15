@@ -1,9 +1,10 @@
 import { FC } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { Text } from 'react-native-gesture-handler';
 import { SvgProps } from 'react-native-svg';
 import Check from '@assets/icons/check.svg';
 import { colors } from '@utils/colors';
+import Pressable from '../atoms/Pressable';
 
 type TodoItemProps = {
   icon: FC<SvgProps>;
@@ -15,7 +16,7 @@ type TodoItemProps = {
   toggleCheck?: () => void;
 };
 
-const TodoItem = ({
+const TaskItem = ({
   icon: Icon,
   time,
   title,
@@ -100,4 +101,4 @@ const TodoItem = ({
   );
 };
 
-export default TodoItem;
+export default TaskItem;

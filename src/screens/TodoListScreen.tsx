@@ -3,86 +3,52 @@ import Ellipse1 from '@assets/ellipse1.svg';
 import Ellipse2 from '@assets/ellipse2.svg';
 import ArrowLeft from '@assets/icons/arrow-left.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useEffect, useState } from 'react';
-import { Button, NavigationButton, TodoItem } from '@components/atoms';
+import { useState } from 'react';
+import { Button } from '@components/atoms';
 import { CATEGORY_STYLES } from '@utils/contants';
 import { colors } from '@utils/colors';
 import { ScrollView } from 'react-native-gesture-handler';
+import { TodoListScreenProps } from '@navigation/TodoListNavigator/TodoListNavigator.types';
+import { selectCurrentTasks } from '@redux/store/selectors';
+import { useAppDispatch, useAppSelector } from '@redux/hooks';
+import { appActions } from '@redux/slice';
+import {
+  AnimatedInput,
+  NavigationButton,
+  TaskItem,
+} from '@components/molecules';
+import { useSearchTasks } from '@hooks/index';
+import SearchIcon from '@assets/icons/search.svg';
 
-const list = [
-  {
-    key: '1',
-    category: 'file',
-    title: 'Study lesson',
-    time: '1:00pm',
-    isChecked: false,
-  },
-  {
-    key: '2',
-    category: 'sport',
-    title: 'Run 5k',
-    time: '4:00pm',
-    isChecked: false,
-  },
-  {
-    key: '3',
-    category: 'event',
-    title: 'Go to party',
-    time: '10:00pm',
-    isChecked: false,
-  },
-  {
-    key: '4',
-    category: 'file',
-    title: 'Take out trash',
-    isChecked: true,
-  },
-  {
-    key: '5',
-    category: 'event',
-    title: 'Game meetup',
-    time: '1:00pm',
-    isChecked: true,
-  },
-];
-
-const TodoListScreen = () => {
+const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
+  const dispatch = useAppDispatch();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const [date, setDate] = useState(new Date());
-  const [completedList, setCompletedList] = useState<
-    {
-      key: string;
-      category: string;
-      title: string;
-      time: string | undefined;
-      isChecked: boolean;
-    }[]
-  >([]);
-  const [todoList, setTodoList] = useState<
-    {
-      key: string;
-      category: string;
-      title: string;
-      time: string | undefined;
-      isChecked: boolean;
-    }[]
-  >([]);
+  const [date] = useState(new Date());
 
-  useEffect(() => {
-    if (!list) return;
-    const completed = list
-      .filter((item) => item.isChecked)
-      .map((item) => ({ ...item, time: item.time ?? undefined }));
-    const todo = list
-      .filter((item) => !item.isChecked)
-      .map((item) => ({ ...item, time: item.time ?? undefined }));
-    setCompletedList(completed);
-    setTodoList(todo);
-  }, []);
+  // Redux state
+  const currentTasks = useAppSelector(selectCurrentTasks);
+
+  // Search functionality using custom hook
+  const {
+    searchValue,
+    setSearchValue,
+    isSearchVisible,
+    setIsSearchVisible,
+    displayedTasks: { todoList, completedList },
+  } = useSearchTasks({
+    taskList: currentTasks,
+  });
 
   const handlePress = () => {
-    console.log('Pressed');
-    setDate(new Date(date.setDate(date.getDate() - 1)));
+    dispatch(appActions.cleanAllTasks());
+  };
+
+  const navigateToAddNewTask = () => {
+    navigation.navigate('AddNewTaskScreen');
+  };
+
+  const handleToggleCheck = (id: string) => {
+    dispatch(appActions.toggleCheck(id));
   };
 
   return (
@@ -93,11 +59,12 @@ const TodoListScreen = () => {
         position: 'relative',
       }}
     >
+      {/* Background */}
       <View
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <View style={{ flex: 0.3, backgroundColor: '#4A3780' }} />
-        <View style={{ flex: 0.7, backgroundColor: '#F1F5F9' }} />
+        <View style={{ flex: 0.3, backgroundColor: colors.deepIndigo }} />
+        <View style={{ flex: 0.7, backgroundColor: colors.softMist }} />
         <View style={{ position: 'absolute', top: 60, left: 0 }}>
           <Ellipse1 />
         </View>
@@ -106,98 +73,125 @@ const TodoListScreen = () => {
         </View>
       </View>
 
+      {/* Content */}
       <View
         style={{
           flex: 1,
           top: topInset,
         }}
       >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <NavigationButton onPress={handlePress} icon={ArrowLeft} />
-          <Text style={{ fontWeight: 600, color: colors.white, fontSize: 16 }}>
-            {date.toDateString()}
-          </Text>
-        </View>
-
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <Text
+        {/* Header */}
+        {isSearchVisible ? (
+          <AnimatedInput
+            icon={{
+              component: <SearchIcon color="#000" />,
+              size: 24,
+            }}
+            value={searchValue}
+            autoFocus={true}
+            placeholder="Search..."
+            onChangeText={setSearchValue}
+            onCancel={() => {
+              setIsSearchVisible(false);
+              setSearchValue('');
+            }}
+          />
+        ) : (
+          <View
             style={{
-              fontWeight: 700,
-              color: colors.border,
-              fontSize: 30,
-              textAlign: 'center',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              marginBottom: 24,
             }}
           >
-            My Todo List
-          </Text>
+            <NavigationButton onPress={handlePress} icon={ArrowLeft} />
+            <Text
+              style={{ fontWeight: 600, color: colors.white, fontSize: 16 }}
+            >
+              {date.toDateString()}
+            </Text>
+            <NavigationButton
+              isRight
+              onPress={() => setIsSearchVisible(true)}
+              icon={SearchIcon}
+            />
+          </View>
+        )}
 
+        {/* Task Lists */}
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {!isSearchVisible && (
+            <Text
+              style={{
+                fontWeight: 700,
+                color: colors.border,
+                fontSize: 30,
+                textAlign: 'center',
+              }}
+            >
+              My Todo List
+            </Text>
+          )}
+
+          {/* Todo List */}
           <View
             style={{
               marginTop: 32,
               backgroundColor: colors.white,
-
               borderRadius: 16,
             }}
           >
-            {/* Render List */}
             {todoList.map((item, index) => {
               const { icon: Icon, backgroundColor } =
                 CATEGORY_STYLES[item.category];
-              const isLast = index === todoList.length - 1;
-
               return (
-                <TodoItem
-                  key={item.key}
+                <TaskItem
+                  key={item.id}
                   time={item.time}
-                  title={item.title}
+                  title={item.taskTitle}
                   icon={Icon}
-                  isLast={isLast}
+                  isLast={index === todoList.length - 1}
                   isChecked={item.isChecked}
+                  toggleCheck={() => handleToggleCheck(item.id)}
                   backgroundColor={backgroundColor}
                 />
               );
             })}
           </View>
 
-          <Text
-            style={{
-              marginVertical: 24,
-              fontWeight: 600,
-              color: colors.black,
-              fontSize: 16,
-            }}
-          >
-            Completed
-          </Text>
+          {/* Completed List */}
+          {completedList.length > 0 && (
+            <Text
+              style={{
+                marginVertical: 24,
+                fontWeight: 600,
+                color: colors.black,
+                fontSize: 16,
+              }}
+            >
+              Completed
+            </Text>
+          )}
 
           <View
             style={{
               backgroundColor: colors.white,
-
               borderRadius: 16,
             }}
           >
-            {/* Render Completed List */}
             {completedList.map((item, index) => {
               const { icon: Icon, backgroundColor } =
                 CATEGORY_STYLES[item.category];
-              const isLast = index === completedList.length - 1;
-
               return (
-                <TodoItem
-                  key={item.key}
+                <TaskItem
+                  key={item.id}
                   time={item.time}
-                  title={item.title}
+                  title={item.taskTitle}
                   icon={Icon}
-                  isLast={isLast}
+                  isLast={index === completedList.length - 1}
                   isChecked={item.isChecked}
+                  toggleCheck={() => handleToggleCheck(item.id)}
                   backgroundColor={backgroundColor}
                 />
               );
@@ -205,6 +199,8 @@ const TodoListScreen = () => {
           </View>
         </ScrollView>
       </View>
+
+      {/* Add Task Button */}
       <View
         style={{
           position: 'absolute',
@@ -214,7 +210,7 @@ const TodoListScreen = () => {
           left: 0,
         }}
       >
-        <Button title="Add New Task" onPress={() => false} />
+        <Button title="Add New Task" onPress={navigateToAddNewTask} />
       </View>
     </View>
   );

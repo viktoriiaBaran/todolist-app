@@ -2,7 +2,10 @@ import Calendar from '@assets/icons/calendar.svg';
 import File from '@assets/icons/file.svg';
 import Trophy from '@assets/icons/trophy.svg';
 
-export const CATEGORY_STYLES = {
+export const CATEGORY_STYLES: Record<
+  string,
+  { icon: any; backgroundColor: string }
+> = {
   file: {
     icon: File,
     backgroundColor: '#DBECF6',
@@ -16,3 +19,5 @@ export const CATEGORY_STYLES = {
     backgroundColor: '#E7E2F3',
   },
 };
+
+export const CATEGOGIES = ['file', 'sport', 'event'];

@@ -12,9 +12,12 @@ module.exports = {
           '@assets': './src/assets',
           '@utils': './src/utils',
           '@styles': './src/styles',
+          '@redux': './src/redux',
           '@store': './src/redux/store',
+          '@hooks': './src/hooks',
         },
       },
     ],
+    'react-native-reanimated/plugin',
   ],
 };

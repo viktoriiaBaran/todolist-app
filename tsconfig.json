@@ -11,7 +11,13 @@
       "@assets/*": ["src/assets/*"],
       "@assets": ["src/assets"],
       "@utils/*": ["src/utils/*"],
-      "@utils": ["src/utils"]
+      "@utils": ["src/utils"],
+      "@redux/*": ["src/redux/*"],
+      "@redux": ["src/redux"],
+      "@store/*": ["src/redux/store/*"],
+      "@store": ["src/redux/store"],
+      "@hooks/*": ["src/hooks/*"],
+      "@hooks": ["src/hooks"]
     }
   }
 }
