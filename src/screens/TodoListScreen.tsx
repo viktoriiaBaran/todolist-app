@@ -88,7 +88,8 @@ const TodoListScreen = ({ navigation, route }: TodoListScreenProps) => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 27,
+              paddingTop: 12,
+              marginBottom: 15,
             }}
           >
             <NavigationButton onPress={handleBackPress} icon={ArrowLeft} />
