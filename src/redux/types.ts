@@ -6,7 +6,8 @@ export type AppDispatch = typeof store.dispatch;
 export type AppState = {
   currentRouteName: string;
   previousRouteName: string;
-  currentTasks: Task[];
+  allTasks: Record<string, Task[]>;
+  currentDate: string;
 };
 
 export type Task = {

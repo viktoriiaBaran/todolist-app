@@ -1,15 +1,16 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import Ellipse1 from '@assets/ellipse1.svg';
 import Ellipse2 from '@assets/ellipse2.svg';
 import ArrowLeft from '@assets/icons/arrow-left.svg';
+import ArrowRight from '@assets/icons/arrow-right.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useState } from 'react';
-import { Button } from '@components/atoms';
+import { useEffect, useState } from 'react';
+import { Button, Text } from '@components/atoms';
 import { CATEGORY_STYLES } from '@utils/contants';
 import { colors } from '@utils/colors';
 import { ScrollView } from 'react-native-gesture-handler';
 import { TodoListScreenProps } from '@navigation/TodoListNavigator/TodoListNavigator.types';
-import { selectCurrentTasks } from '@redux/store/selectors';
+import { selectCurrentDate, selectAllTasks } from '@redux/selectors';
 import { useAppDispatch, useAppSelector } from '@redux/hooks';
 import { appActions } from '@redux/slice';
 import {
@@ -20,27 +21,27 @@ import {
 import { useSearchTasks } from '@hooks/index';
 import SearchIcon from '@assets/icons/search.svg';
 
-const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
+const TodoListScreen = ({ navigation, route }: TodoListScreenProps) => {
   const dispatch = useAppDispatch();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
-  const [date] = useState(new Date());
 
-  // Redux state
-  const currentTasks = useAppSelector(selectCurrentTasks);
+  const currentDate = route.params?.date;
+  const allTasks = useAppSelector(selectAllTasks);
+  const dayTasks = allTasks[currentDate] || [];
+  const [todoList, setTodoList] = useState(
+    dayTasks.filter((task) => !task.isChecked)
+  );
+  const [completedList, setCompletedTasks] = useState(
+    dayTasks.filter((task) => task.isChecked)
+  );
 
-  // Search functionality using custom hook
-  const {
-    searchValue,
-    setSearchValue,
-    isSearchVisible,
-    setIsSearchVisible,
-    displayedTasks: { todoList, completedList },
-  } = useSearchTasks({
-    taskList: currentTasks,
-  });
+  useEffect(() => {
+    setTodoList(dayTasks.filter((task) => !task.isChecked));
+    setCompletedTasks(dayTasks.filter((task) => task.isChecked));
+  }, [dayTasks]);
 
-  const handlePress = () => {
-    dispatch(appActions.cleanAllTasks());
+  const handleBackPress = () => {
+    navigation.navigate('AllTasksScreen');
   };
 
   const navigateToAddNewTask = () => {
@@ -48,7 +49,7 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
   };
 
   const handleToggleCheck = (id: string) => {
-    dispatch(appActions.toggleCheck(id));
+    dispatch(appActions.toggleCheck({ date: currentDate, taskId: id }));
   };
 
   return (
@@ -81,59 +82,35 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
         }}
       >
         {/* Header */}
-        {isSearchVisible ? (
-          <AnimatedInput
-            icon={{
-              component: <SearchIcon color="#000" />,
-              size: 24,
-            }}
-            value={searchValue}
-            autoFocus={true}
-            placeholder="Search..."
-            onChangeText={setSearchValue}
-            onCancel={() => {
-              setIsSearchVisible(false);
-              setSearchValue('');
-            }}
-          />
-        ) : (
+        <View style={{ flexDirection: 'column', paddingBottom: 12 }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              marginBottom: 24,
+              marginBottom: 27,
             }}
           >
-            <NavigationButton onPress={handlePress} icon={ArrowLeft} />
+            <NavigationButton onPress={handleBackPress} icon={ArrowLeft} />
             <Text
               style={{ fontWeight: 600, color: colors.white, fontSize: 16 }}
             >
-              {date.toDateString()}
+              {currentDate}
             </Text>
-            <NavigationButton
-              isRight
-              onPress={() => setIsSearchVisible(true)}
-              icon={SearchIcon}
-            />
           </View>
-        )}
+          <Text
+            variant="title"
+            style={{
+              color: colors.border,
+              textAlign: 'center',
+            }}
+          >
+            My Todo List
+          </Text>
+        </View>
 
         {/* Task Lists */}
         <ScrollView showsVerticalScrollIndicator={false}>
-          {!isSearchVisible && (
-            <Text
-              style={{
-                fontWeight: 700,
-                color: colors.border,
-                fontSize: 30,
-                textAlign: 'center',
-              }}
-            >
-              My Todo List
-            </Text>
-          )}
-
           {/* Todo List */}
           <View
             style={{
@@ -178,6 +155,7 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
             style={{
               backgroundColor: colors.white,
               borderRadius: 16,
+              marginBottom: 200,
             }}
           >
             {completedList.map((item, index) => {

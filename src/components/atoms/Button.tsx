@@ -5,15 +5,14 @@ import Pressable from './Pressable';
 type ButtonProps = {
   onPress: () => void;
   title: string;
-  bgColor?: string;
 };
 
-const Button = ({ onPress, title, bgColor }: ButtonProps) => {
+const Button = ({ onPress, title }: ButtonProps) => {
   return (
     <Pressable
       onPress={onPress}
       style={{
-        backgroundColor: bgColor || colors.checkBoxBorder,
+        backgroundColor: colors.checkBoxBorder,
         padding: 16,
         borderRadius: 50,
         justifyContent: 'center',

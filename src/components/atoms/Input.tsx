@@ -113,7 +113,6 @@ const Input = ({
         open={open}
         date={date}
         mode={type}
-        minimumDate={type === 'date' ? new Date() : undefined}
         onConfirm={handleConfirm}
         onCancel={() => setOpen(false)}
       />

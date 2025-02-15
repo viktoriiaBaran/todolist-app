@@ -67,8 +67,8 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
       <View
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <View style={{ flex: 0.135, backgroundColor: '#4A3780' }} />
-        <View style={{ flex: 0.755, backgroundColor: '#F1F5F9' }} />
+        <View style={{ flex: 0.15, backgroundColor: '#4A3780' }} />
+        <View style={{ flex: 0.75, backgroundColor: '#F1F5F9' }} />
         <View style={{ position: 'absolute', top: 0, left: 0 }}>
           <Ellipse1 />
         </View>
@@ -88,6 +88,7 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
+            paddingTop: 12,
             marginBottom: 24,
           }}
         >
@@ -99,7 +100,7 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Task Title block */}
-          <View style={{ marginTop: 48 }}>
+          <View style={{ marginTop: 32 }}>
             <Input
               title="Task Title"
               placeholder="Task Title"
@@ -172,7 +173,7 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
                 onChange={(date) =>
                   setTask((prev) => ({
                     ...prev,
-                    date,
+                    date: date.toDateString(),
                   }))
                 }
               />

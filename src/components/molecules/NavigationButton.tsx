@@ -19,6 +19,7 @@ const NavigationButton = ({
         position: 'absolute',
         left: isRight ? undefined : 0,
         right: isRight ? 0 : undefined,
+        top: 0,
         width: 48,
         height: 48,
         justifyContent: 'center',

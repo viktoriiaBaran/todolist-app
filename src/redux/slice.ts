@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppState, Task } from './types';
-import { v4 as uuidv4 } from 'uuid';
 
 const initialState: AppState = {
   currentRouteName: '',
   previousRouteName: '',
-  currentTasks: [],
+  allTasks: {} as Record<string, Task[]>,
+  currentDate: '',
 };
 
 export const appSlice = createSlice({
@@ -16,36 +16,64 @@ export const appSlice = createSlice({
       state.previousRouteName = state.currentRouteName;
       state.currentRouteName = action.payload;
     },
+    setCurrentDate(state, action: PayloadAction<string>) {
+      state.currentDate = action.payload;
+    },
     addNewTask(state, action: PayloadAction<Task>) {
-      state.currentTasks.push(action.payload);
+      const date = action.payload.date as string;
+
+      if (!state.allTasks[date]) {
+        state.allTasks[date] = [];
+      }
+
+      state.allTasks[date].push(action.payload);
+    },
+
+    updateTaskList(
+      state,
+      action: PayloadAction<{ date: string; tasks: Task[] }>
+    ) {
+      state.allTasks[action.payload.date] = action.payload.tasks;
     },
     cleanAllTasks(state) {
-      state.currentTasks = [];
+      state.allTasks = {};
     },
-    toggleCheck(state, action: PayloadAction<string>) {
-      const task = state.currentTasks.find(
-        (item) => item.id === action.payload
-      );
-      console.log('task', task);
-      if (task) {
-        task.isChecked = !task.isChecked;
+    toggleCheck(
+      state,
+      action: PayloadAction<{ date: string; taskId: string }>
+    ) {
+      const { date, taskId } = action.payload;
+      if (state.allTasks[date]) {
+        const taskIndex = state.allTasks[date].findIndex(
+          (task) => task.id === taskId
+        );
+        if (taskIndex !== -1) {
+          state.allTasks[date][taskIndex].isChecked =
+            !state.allTasks[date][taskIndex].isChecked;
+        }
       }
     },
-    removeTask(state, action: PayloadAction<string>) {
-      state.currentTasks = state.currentTasks.filter(
-        (item) => item.id !== action.payload
-      );
+    removeTask(state, action: PayloadAction<{ date: string; taskId: string }>) {
+      const { date, taskId } = action.payload;
+      if (state.allTasks[date]) {
+        state.allTasks[date] = state.allTasks[date].filter(
+          (task) => task.id !== taskId
+        );
+        if (state.allTasks[date].length === 0) {
+          const { [date]: _, ...rest } = state.allTasks;
+          state.allTasks = rest;
+        }
+      }
     },
     updateTask(state, action: PayloadAction<Task>) {
-      const task = state.currentTasks.find(
-        (item) => item.id === action.payload.id
-      );
-      if (task) {
-        task.taskTitle = action.payload.taskTitle;
-        task.category = action.payload.category;
-        task.date = action.payload.date;
-        task.time = action.payload.time;
-        task.notes = action.payload.notes;
+      const date = action.payload.date as string;
+      if (state.allTasks[date]) {
+        const taskIndex = state.allTasks[date].findIndex(
+          (task) => task.id === action.payload.id
+        );
+        if (taskIndex !== -1) {
+          state.allTasks[date][taskIndex] = action.payload;
+        }
       }
     },
     resetState: () => initialState,

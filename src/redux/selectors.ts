@@ -1,5 +1,5 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from '../types';
+import { RootState } from './types';
 
 const selectApp = (state: RootState) => state.todoList;
 
@@ -13,7 +13,12 @@ export const selectPreviousRouteName = createSelector(
   (state) => state.previousRouteName
 );
 
-export const selectCurrentTasks = createSelector(
+export const selectAllTasks = createSelector(
   selectApp,
-  (state) => state.currentTasks
+  (state) => state.allTasks
+);
+
+export const selectCurrentDate = createSelector(
+  selectApp,
+  (state) => state.currentDate
 );

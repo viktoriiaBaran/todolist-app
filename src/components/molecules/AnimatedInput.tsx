@@ -97,7 +97,11 @@ const AnimatedInput = ({
   return (
     <View
       onLayout={onLayout}
-      style={{ flexDirection: 'row', alignItems: 'center' }}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingBottom: 57,
+      }}
     >
       <Animated.View style={[animatedInputStyle]}>
         <TextInput

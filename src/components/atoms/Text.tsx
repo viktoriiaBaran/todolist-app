@@ -8,7 +8,7 @@ import {
 const textStyles = {
   newTaskTitle: {
     fontSize: 14,
-    fontWeight: 600 as TextStyle['fontWeight'],
+    fontWeight: '600' as TextStyle['fontWeight'],
     lineHeight: 15.4,
   },
   description: {
@@ -16,10 +16,9 @@ const textStyles = {
     fontWeight: '400' as TextStyle['fontWeight'],
     lineHeight: 21,
   },
-  caption: {
-    fontSize: 12,
-    fontWeight: '400' as TextStyle['fontWeight'],
-    lineHeight: 16,
+  title: {
+    fontSize: 30,
+    fontWeight: '700' as TextStyle['fontWeight'],
   },
   button: {
     fontSize: 17,
