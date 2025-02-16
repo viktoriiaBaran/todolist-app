@@ -50,7 +50,7 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
   };
 
   const handlePressSave = () => {
-    if (!task.taskTitle || !task.category) return;
+    if (!task.taskTitle || !task.category || !task.date) return;
 
     dispatch(appActions.addNewTask({ ...task, id: uuidv4() }));
     navigation.goBack();

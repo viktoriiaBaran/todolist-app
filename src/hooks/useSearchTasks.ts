@@ -1,5 +1,5 @@
 import { Task } from '@redux/types';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const useSearchTasks = ({
   taskList,
@@ -16,10 +16,19 @@ const useSearchTasks = ({
     [date: string]: Task[];
   }>({});
 
-  useEffect(() => {
+  const sortDatesDescending = (tasks: { [date: string]: Task[] }) => {
+    return Object.fromEntries(
+      Object.entries(tasks).sort((a, b) => {
+        const dateA = new Date(a[0].split('.').reverse().join('-'));
+        const dateB = new Date(b[0].split('.').reverse().join('-'));
+        return dateB.getTime() - dateA.getTime();
+      })
+    );
+  };
+
+  const filterTasks = useCallback(() => {
     if (!taskList) {
-      setFilteredTasksByDate({});
-      return;
+      return {};
     }
 
     const filteredTasks: { [date: string]: Task[] } = {};
@@ -49,8 +58,14 @@ const useSearchTasks = ({
       }
     });
 
-    setFilteredTasksByDate(filteredTasks);
-  }, [searchValue, taskList, completeStatus, category]);
+    return sortDatesDescending(filteredTasks);
+  }, [taskList, searchValue, completeStatus, category]);
+
+  const memoizedFilteredTasks = useMemo(() => filterTasks(), [filterTasks]);
+
+  useEffect(() => {
+    setFilteredTasksByDate(memoizedFilteredTasks);
+  }, [memoizedFilteredTasks]);
 
   return {
     searchValue,

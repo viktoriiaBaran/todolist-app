@@ -8,7 +8,7 @@ import {
 import { AllTasksScreenProps } from '@navigation/TodoListNavigator/TodoListNavigator.types';
 import { colors } from '@utils/colors';
 import { View, TouchableWithoutFeedback } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
 import Ellipse1 from '@assets/ellipse1.svg';
 import Ellipse2 from '@assets/ellipse2.svg';
 import SearchIcon from '@assets/icons/search.svg';
@@ -21,7 +21,7 @@ import { selectAllTasks } from '@redux/selectors';
 import { Task } from '@redux/types';
 import { CATEGORY_STYLES, SCREEN_HEIGHT, SCREEN_WIDTH } from '@utils/contants';
 import { appActions } from '@redux/slice';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import Modal from 'react-native-modal';
 
@@ -31,6 +31,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
 
   const allTasks = useAppSelector(selectAllTasks);
 
+  const flatListRef = useRef<FlatList>(null);
   const [isFilterVisible, setIsFilterVisible] = useState(false);
   const [completeStatus, setCompleteStatus] = useState<string[]>([
     'done',
@@ -66,6 +67,10 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
     dispatch(appActions.toggleCheck({ date: taskDate, taskId: id }));
   };
 
+  const handleDelete = (date: string, taskId: string) => {
+    dispatch(appActions.removeTask({ date, taskId }));
+  };
+
   const renderTasksForDate = (date: string, tasks: Task[]) => (
     <View key={date}>
       <Pressable onPress={() => navigateToDayTasks(date)}>
@@ -93,7 +98,6 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
             CATEGORY_STYLES[task.category];
           return (
             <TaskItem
-              key={task.id}
               time={task.time}
               title={task.taskTitle}
               icon={Icon}
@@ -102,6 +106,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
               toggleCheck={() =>
                 handleToggleCheck(task.date as string, task.id)
               }
+              handleDelete={() => handleDelete(task.date as string, task.id)}
               backgroundColor={backgroundColor}
             />
           );
@@ -253,19 +258,18 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
         </Modal>
 
         {/* Task Lists */}
-        <ScrollView showsVerticalScrollIndicator={false}>
-          <FlatList
-            data={Object.entries(filteredTasks)}
-            renderItem={({ item: [date, tasks] }) =>
-              renderTasksForDate(date, tasks)
-            }
-            contentContainerStyle={{
-              gap: 24,
-              paddingTop: 20,
-              marginBottom: 150,
-            }}
-          />
-        </ScrollView>
+        <FlatList
+          data={Object.entries(filteredTasks)}
+          renderItem={({ item: [date, tasks] }) =>
+            renderTasksForDate(date, tasks)
+          }
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            gap: 24,
+            paddingTop: 20,
+            paddingBottom: bottomInset + 100,
+          }}
+        />
       </View>
 
       {/* Add Task Button */}

@@ -3,7 +3,8 @@ import { View } from 'react-native';
 import { Text } from 'react-native-gesture-handler';
 import { SvgProps } from 'react-native-svg';
 import { colors } from '@utils/colors';
-import { Checkbox } from '@components/atoms';
+import { Checkbox, Pressable } from '@components/atoms';
+import TrashIcon from '@assets/icons/trash.svg';
 
 type TodoItemProps = {
   icon: FC<SvgProps>;
@@ -13,6 +14,7 @@ type TodoItemProps = {
   isLast?: boolean;
   backgroundColor: string;
   toggleCheck: () => void;
+  handleDelete: () => void;
 };
 
 const TaskItem = ({
@@ -23,6 +25,7 @@ const TaskItem = ({
   isLast,
   backgroundColor,
   toggleCheck,
+  handleDelete,
 }: TodoItemProps) => {
   return (
     <View
@@ -81,7 +84,12 @@ const TaskItem = ({
           )}
         </View>
       </View>
-      <Checkbox isChecked={isChecked} onChange={toggleCheck} />
+      <View style={{ flexDirection: 'row', gap: 16 }}>
+        <Pressable onPress={handleDelete}>
+          <TrashIcon />
+        </Pressable>
+        <Checkbox isChecked={isChecked} onChange={toggleCheck} />
+      </View>
     </View>
   );
 };
