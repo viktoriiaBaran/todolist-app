@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Task } from '@redux/types';
 import { useAppDispatch } from '@redux/hooks';
 import { appActions } from '@redux/slice';
-import { NavigationButton } from '@components/molecules';
+import { CategoryButton, NavigationButton } from '@components/molecules';
 
 const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
   const dispatch = useAppDispatch();
@@ -133,25 +133,14 @@ const AddNewTaskScreen = ({ navigation }: AddNewTaskScreenProps) => {
                 const { icon: Icon, backgroundColor } = CATEGORY_STYLES[item];
 
                 return (
-                  <Pressable
+                  <CategoryButton
                     key={item}
-                    onPress={() => handleCategoryPress(item)}
-                    style={{
-                      borderWidth: 2,
-                      borderColor:
-                        category === item
-                          ? colors.checkBoxBorder
-                          : colors.white,
-                      backgroundColor,
-                      borderRadius: 50,
-                      width: 48,
-                      height: 48,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Icon />
-                  </Pressable>
+                    icon={Icon}
+                    backgroundColor={backgroundColor}
+                    item={item}
+                    category={category}
+                    onPress={handleCategoryPress}
+                  />
                 );
               })}
             </View>

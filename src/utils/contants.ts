@@ -1,6 +1,10 @@
 import Calendar from '@assets/icons/calendar.svg';
 import File from '@assets/icons/file.svg';
 import Trophy from '@assets/icons/trophy.svg';
+import { Dimensions } from 'react-native';
+
+export const SCREEN_HEIGHT = Dimensions.get('screen').height;
+export const SCREEN_WIDTH = Dimensions.get('screen').width;
 
 export const CATEGORY_STYLES: Record<
   string,

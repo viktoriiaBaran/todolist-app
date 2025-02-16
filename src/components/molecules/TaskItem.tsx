@@ -2,9 +2,8 @@ import { FC } from 'react';
 import { View } from 'react-native';
 import { Text } from 'react-native-gesture-handler';
 import { SvgProps } from 'react-native-svg';
-import Check from '@assets/icons/check.svg';
 import { colors } from '@utils/colors';
-import Pressable from '../atoms/Pressable';
+import { Checkbox } from '@components/atoms';
 
 type TodoItemProps = {
   icon: FC<SvgProps>;
@@ -13,7 +12,7 @@ type TodoItemProps = {
   isChecked: boolean;
   isLast?: boolean;
   backgroundColor: string;
-  toggleCheck?: () => void;
+  toggleCheck: () => void;
 };
 
 const TaskItem = ({
@@ -82,21 +81,7 @@ const TaskItem = ({
           )}
         </View>
       </View>
-      <Pressable
-        style={{
-          borderWidth: 1,
-          width: 24,
-          height: 24,
-          borderRadius: 3,
-          borderColor: colors.checkBoxBorder,
-          backgroundColor: isChecked ? colors.checkBoxBorder : 'transparent',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        onPress={toggleCheck}
-      >
-        {isChecked && <Check />}
-      </Pressable>
+      <Checkbox isChecked={isChecked} onChange={toggleCheck} />
     </View>
   );
 };

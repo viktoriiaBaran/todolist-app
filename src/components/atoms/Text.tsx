@@ -16,6 +16,10 @@ const textStyles = {
     fontWeight: '400' as TextStyle['fontWeight'],
     lineHeight: 21,
   },
+  filterTitle: {
+    fontSize: 16,
+    fontWeight: '600' as TextStyle['fontWeight'],
+  },
   title: {
     fontSize: 30,
     fontWeight: '700' as TextStyle['fontWeight'],

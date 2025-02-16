@@ -2,7 +2,6 @@ import { View } from 'react-native';
 import Ellipse1 from '@assets/ellipse1.svg';
 import Ellipse2 from '@assets/ellipse2.svg';
 import ArrowLeft from '@assets/icons/arrow-left.svg';
-import ArrowRight from '@assets/icons/arrow-right.svg';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
 import { Button, Text } from '@components/atoms';
@@ -10,16 +9,10 @@ import { CATEGORY_STYLES } from '@utils/contants';
 import { colors } from '@utils/colors';
 import { ScrollView } from 'react-native-gesture-handler';
 import { TodoListScreenProps } from '@navigation/TodoListNavigator/TodoListNavigator.types';
-import { selectCurrentDate, selectAllTasks } from '@redux/selectors';
+import { selectAllTasks } from '@redux/selectors';
 import { useAppDispatch, useAppSelector } from '@redux/hooks';
 import { appActions } from '@redux/slice';
-import {
-  AnimatedInput,
-  NavigationButton,
-  TaskItem,
-} from '@components/molecules';
-import { useSearchTasks } from '@hooks/index';
-import SearchIcon from '@assets/icons/search.svg';
+import { NavigationButton, TaskItem } from '@components/molecules';
 
 const TodoListScreen = ({ navigation, route }: TodoListScreenProps) => {
   const dispatch = useAppDispatch();
@@ -64,7 +57,7 @@ const TodoListScreen = ({ navigation, route }: TodoListScreenProps) => {
       <View
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <View style={{ flex: 0.3, backgroundColor: colors.deepIndigo }} />
+        <View style={{ flex: 0.3, backgroundColor: colors.checkBoxBorder }} />
         <View style={{ flex: 0.7, backgroundColor: colors.softMist }} />
         <View style={{ position: 'absolute', top: 60, left: 0 }}>
           <Ellipse1 />

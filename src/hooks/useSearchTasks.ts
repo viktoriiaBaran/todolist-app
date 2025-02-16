@@ -3,8 +3,12 @@ import { useEffect, useState } from 'react';
 
 const useSearchTasks = ({
   taskList,
+  completeStatus,
+  category,
 }: {
   taskList: { [date: string]: Task[] };
+  completeStatus: string[];
+  category: string[];
 }) => {
   const [searchValue, setSearchValue] = useState('');
   const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -18,28 +22,35 @@ const useSearchTasks = ({
       return;
     }
 
-    if (searchValue === '') {
-      setFilteredTasksByDate(taskList);
-      return;
-    }
-
     const filteredTasks: { [date: string]: Task[] } = {};
 
-    // Iterate through each date
     Object.entries(taskList).forEach(([date, tasks]) => {
-      // Filter tasks for current date
-      const matchingTasks = tasks.filter((task) =>
-        task.taskTitle.toLowerCase().includes(searchValue.toLowerCase())
-      );
+      const matchingTasks = tasks.filter((task) => {
+        // Search filter
+        const matchesSearch =
+          searchValue === '' ||
+          task.taskTitle.toLowerCase().includes(searchValue.toLowerCase());
 
-      // Only add date to filtered results if there are matching tasks
+        // Status filter
+        const matchesStatus =
+          completeStatus.length === 0 ||
+          (completeStatus.includes('done') && task.isChecked) ||
+          (completeStatus.includes('undone') && !task.isChecked);
+
+        // Category filter
+        const matchesCategory =
+          category.length === 0 || category.includes(task.category);
+
+        return matchesSearch && matchesStatus && matchesCategory;
+      });
+
       if (matchingTasks.length > 0) {
         filteredTasks[date] = matchingTasks;
       }
     });
 
     setFilteredTasksByDate(filteredTasks);
-  }, [searchValue, taskList]);
+  }, [searchValue, taskList, completeStatus, category]);
 
   return {
     searchValue,
