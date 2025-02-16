@@ -254,23 +254,17 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
 
         {/* Task Lists */}
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View
-            style={{
-              gap: 20,
+          <FlatList
+            data={Object.entries(filteredTasks)}
+            renderItem={({ item: [date, tasks] }) =>
+              renderTasksForDate(date, tasks)
+            }
+            contentContainerStyle={{
+              gap: 24,
               paddingTop: 20,
               marginBottom: 150,
             }}
-          >
-            <FlatList
-              data={Object.entries(filteredTasks)}
-              renderItem={({ item: [date, tasks] }) =>
-                renderTasksForDate(date, tasks)
-              }
-              contentContainerStyle={{
-                gap: 24,
-              }}
-            />
-          </View>
+          />
         </ScrollView>
       </View>
 
