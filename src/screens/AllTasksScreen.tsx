@@ -8,7 +8,7 @@ import {
 import { AllTasksScreenProps } from '@navigation/TodoListNavigator/TodoListNavigator.types';
 import { colors } from '@utils/colors';
 import { View, TouchableWithoutFeedback } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Ellipse1 from '@assets/ellipse1.svg';
 import Ellipse2 from '@assets/ellipse2.svg';
 import SearchIcon from '@assets/icons/search.svg';
@@ -261,9 +261,15 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
               marginBottom: 150,
             }}
           >
-            {Object.entries(filteredTasks).map(([date, tasks]) =>
-              renderTasksForDate(date, tasks)
-            )}
+            <FlatList
+              data={Object.entries(filteredTasks)}
+              renderItem={({ item: [date, tasks] }) =>
+                renderTasksForDate(date, tasks)
+              }
+              contentContainerStyle={{
+                gap: 24,
+              }}
+            />
           </View>
         </ScrollView>
       </View>
