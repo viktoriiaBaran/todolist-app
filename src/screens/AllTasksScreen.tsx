@@ -9,8 +9,6 @@ import { AllTasksScreenProps } from '@navigation/TodoListNavigator/TodoListNavig
 import { colors } from '@utils/colors';
 import { View, TouchableWithoutFeedback } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import Ellipse1 from '@assets/ellipse1.svg';
-import Ellipse2 from '@assets/ellipse2.svg';
 import SearchIcon from '@assets/icons/search.svg';
 import Cross from '@assets/icons/cross.svg';
 import FilterIcon from '@assets/icons/filter.svg';
@@ -19,11 +17,18 @@ import useSearchTasks from '@hooks/useSearchTasks';
 import { useAppDispatch, useAppSelector } from '@redux/hooks';
 import { selectAllTasks } from '@redux/selectors';
 import { Task } from '@redux/types';
-import { CATEGORY_STYLES, SCREEN_HEIGHT, SCREEN_WIDTH } from '@utils/contants';
+import {
+  BOTTOM_INSET,
+  CATEGORY_STYLES,
+  SCREEN_HEIGHT,
+  SCREEN_WIDTH,
+  TOP_INSET,
+} from '@utils/contants';
 import { appActions } from '@redux/slice';
 import { useRef, useState } from 'react';
 import { BlurView } from '@react-native-community/blur';
 import Modal from 'react-native-modal';
+import ScreenWrapper from '@components/wrappers/ScreenWrapper';
 
 const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
@@ -98,6 +103,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
             CATEGORY_STYLES[task.category];
           return (
             <TaskItem
+              key={task.id}
               time={task.time}
               title={task.taskTitle}
               icon={Icon}
@@ -134,32 +140,12 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        padding: 16,
-        position: 'relative',
-      }}
-    >
-      {/* Background */}
-      <View
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      >
-        <View style={{ flex: 0.2, backgroundColor: colors.checkBoxBorder }} />
-        <View style={{ flex: 0.8, backgroundColor: colors.softMist }} />
-        <View style={{ position: 'absolute', top: 60, left: 0 }}>
-          <Ellipse1 />
-        </View>
-        <View style={{ position: 'absolute', top: 0, right: 0 }}>
-          <Ellipse2 />
-        </View>
-      </View>
-
+    <ScreenWrapper whiteFlex={8} purpleFlex={2} topElipse1={60}>
       {/* Content */}
       <View
         style={{
           flex: 1,
-          top: topInset,
+          top: topInset || TOP_INSET,
         }}
       >
         {/* Header */}
@@ -232,7 +218,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
             style={{
               flexDirection: 'row',
               justifyContent: 'flex-end',
-              top: topInset - 3,
+              top: topInset || TOP_INSET - 3,
             }}
           >
             <NavigationButton
@@ -245,7 +231,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
               position: 'absolute',
               flexDirection: 'row',
               justifyContent: 'flex-end',
-              top: topInset + 60,
+              top: topInset || TOP_INSET + 60,
             }}
           >
             <FilterModal
@@ -267,7 +253,7 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
           contentContainerStyle={{
             gap: 24,
             paddingTop: 20,
-            paddingBottom: bottomInset + 100,
+            paddingBottom: bottomInset || BOTTOM_INSET + 100,
           }}
         />
       </View>
@@ -278,13 +264,13 @@ const AllTasksScreen = ({ navigation }: AllTasksScreenProps) => {
           position: 'absolute',
           paddingHorizontal: 16,
           right: 0,
-          bottom: bottomInset,
+          bottom: bottomInset || BOTTOM_INSET,
           left: 0,
         }}
       >
         <Button title="Add New Task" onPress={navigateToAddNewTask} />
       </View>
-    </View>
+    </ScreenWrapper>
   );
 };
 

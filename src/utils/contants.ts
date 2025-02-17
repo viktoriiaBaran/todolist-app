@@ -5,6 +5,8 @@ import { Dimensions } from 'react-native';
 
 export const SCREEN_HEIGHT = Dimensions.get('screen').height;
 export const SCREEN_WIDTH = Dimensions.get('screen').width;
+export const BOTTOM_INSET = 22;
+export const TOP_INSET = 28;
 
 export const CATEGORY_STYLES: Record<
   string,
